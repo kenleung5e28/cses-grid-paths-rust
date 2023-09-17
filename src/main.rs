@@ -1,17 +1,5 @@
 use std::io::{BufRead, BufReader};
 
-// fn count_map(map: &[[bool; 7]; 7]) -> usize {
-//     let mut count = 0;
-//     for i in 0..7 {
-//         for j in 0..7 {
-//             if map[i][j] {
-//                 count += 1;
-//             }
-//         }
-//     }
-//     count
-// }
-
 fn go(x: usize, y: usize, to: char) -> Option<(usize, usize)> {
     let x = x as i32;
     let y = y as i32;
@@ -34,7 +22,7 @@ fn go(x: usize, y: usize, to: char) -> Option<(usize, usize)> {
     }
 }
 
-fn dfs(map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usize {
+fn dfs(input: &str, map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usize {
     if x == 0 && y == 6 {
         if i == 47 {
             return 1;
@@ -46,7 +34,11 @@ fn dfs(map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usize {
     }
     let mut count = 0;
     let mut tos = vec![];
+    let c = input.chars().nth((i + 1) as usize).unwrap();
     for to in ['U', 'D', 'L', 'R'] {
+        if c != '?' && c != to {
+            continue;
+        }
         let Some((next_x, next_y)) = go(x, y, to) else {
             continue;
         };
@@ -64,7 +56,7 @@ fn dfs(map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usize {
     for to in tos {
         let (next_x, next_y) = go(x, y, to).unwrap();
         map[next_x][next_y] = true;
-        count += dfs(map, i + 1, next_x, next_y);
+        count += dfs(input, map, i + 1, next_x, next_y);
         map[next_x][next_y] = false;
     }
     count
@@ -73,7 +65,7 @@ fn dfs(map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usize {
 fn solution(input: &str) -> usize {
     let mut map = [[false; 7]; 7];
     map[0][0] = true;
-    dfs(&mut map, -1, 0, 0)
+    dfs(input, &mut map, -1, 0, 0)
 }
 
 fn main() {
@@ -89,7 +81,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_solution() {
+    fn test_all_paths() {
+        assert_eq!(
+            solution("????????????????????????????????????????????????"),
+            88418
+        );
+    }
+
+    #[test]
+    fn test_given_example() {
         assert_eq!(
             solution("??????R??????U??????????????????????????LD????D?"),
             201
