@@ -12,7 +12,9 @@ use std::io::{BufRead, BufReader};
 //     count
 // }
 
-fn go(x: i32, y: i32, to: char) -> Option<(i32, i32)> {
+fn go(x: usize, y: usize, to: char) -> Option<(usize, usize)> {
+    let x = x as i32;
+    let y = y as i32;
     let next_x = match to {
         'U' | 'D' => x,
         'L' => x - 1,
@@ -26,13 +28,13 @@ fn go(x: i32, y: i32, to: char) -> Option<(i32, i32)> {
         _ => unreachable!(),
     };
     if next_x >= 0 && next_x < 7 && next_y >= 0 && next_y < 7 {
-        Some((next_x, next_y))
+        Some((next_x as usize, next_y as usize))
     } else {
         None
     }
 }
 
-fn dfs(map: &mut [[bool; 7]; 7], i: i32, x: i32, y: i32) -> usize {
+fn dfs(map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usize {
     if x == 0 && y == 6 {
         if i == 47 {
             return 1;
@@ -48,7 +50,7 @@ fn dfs(map: &mut [[bool; 7]; 7], i: i32, x: i32, y: i32) -> usize {
         let Some((next_x, next_y)) = go(x, y, to) else {
             continue;
         };
-        if map[next_x as usize][next_y as usize] {
+        if map[next_x][next_y] {
             continue;
         }
         tos.push(to);
@@ -61,9 +63,9 @@ fn dfs(map: &mut [[bool; 7]; 7], i: i32, x: i32, y: i32) -> usize {
     }
     for to in tos {
         let (next_x, next_y) = go(x, y, to).unwrap();
-        map[next_x as usize][next_y as usize] = true;
+        map[next_x][next_y] = true;
         count += dfs(map, i + 1, next_x, next_y);
-        map[next_x as usize][next_y as usize] = false;
+        map[next_x][next_y] = false;
     }
     count
 }
