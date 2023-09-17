@@ -1,8 +1,18 @@
 use std::io::{BufRead, BufReader};
 
 fn go(x: usize, y: usize, to: char) -> Option<(usize, usize)> {
-    let x = x as i32;
-    let y = y as i32;
+    if x == 0 && to == 'L' {
+        return None;
+    }
+    if x == 6 && to == 'R' {
+        return None;
+    }
+    if y == 0 && to == 'U' {
+        return None;
+    }
+    if y == 6 && to == 'D' {
+        return None;
+    }
     let next_x = match to {
         'U' | 'D' => x,
         'L' => x - 1,
@@ -15,11 +25,7 @@ fn go(x: usize, y: usize, to: char) -> Option<(usize, usize)> {
         'D' => y + 1,
         _ => unreachable!(),
     };
-    if next_x >= 0 && next_x < 7 && next_y >= 0 && next_y < 7 {
-        Some((next_x as usize, next_y as usize))
-    } else {
-        None
-    }
+    Some((next_x, next_y))
 }
 
 fn dfs(seq: &Vec<char>, map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usize {
