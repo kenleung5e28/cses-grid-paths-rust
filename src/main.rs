@@ -22,7 +22,7 @@ fn go(x: usize, y: usize, to: char) -> Option<(usize, usize)> {
     }
 }
 
-fn dfs(input: &str, map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usize {
+fn dfs(seq: &Vec<char>, map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usize {
     if x == 0 && y == 6 {
         if i == 47 {
             return 1;
@@ -34,7 +34,7 @@ fn dfs(input: &str, map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usi
     }
     let mut count = 0;
     let mut tos = vec![];
-    let c = input.chars().nth((i + 1) as usize).unwrap();
+    let c = seq[(i + 1) as usize];
     for to in ['U', 'D', 'L', 'R'] {
         if c != '?' && c != to {
             continue;
@@ -56,7 +56,7 @@ fn dfs(input: &str, map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usi
     for to in tos {
         let (next_x, next_y) = go(x, y, to).unwrap();
         map[next_x][next_y] = true;
-        count += dfs(input, map, i + 1, next_x, next_y);
+        count += dfs(seq, map, i + 1, next_x, next_y);
         map[next_x][next_y] = false;
     }
     count
@@ -65,7 +65,8 @@ fn dfs(input: &str, map: &mut [[bool; 7]; 7], i: i32, x: usize, y: usize) -> usi
 fn solution(input: &str) -> usize {
     let mut map = [[false; 7]; 7];
     map[0][0] = true;
-    dfs(input, &mut map, -1, 0, 0)
+
+    dfs(&input.chars().collect(), &mut map, -1, 0, 0)
 }
 
 fn main() {
